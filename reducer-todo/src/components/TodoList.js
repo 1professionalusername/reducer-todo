@@ -1,51 +1,57 @@
 import React, { useState, useReducer } from "react";
-import { initialState, todoReducer } from "../reducers/Reducer";
+import { initialState, reducer } from "../reducers/todoReducer";
 
 
-
+// STEP 2 - Set up state in your component
+//Using the `reducer` hook, set up state in your component.
 const TodoList = () => {
-    const [state, dispatch] = useReducer(todoReducer, initialState);
-    const [newTitleText, setNewTitleText,] = useState('');
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const [newTodo, setNewTodo] = useState('');
 
 
     const handleChanges = e => {
-        setNewTitleText(e.target.value);
+        setNewTodo(e.target.value);
     };
-
+    const handleSubmit = event => {
+        event.preventDefault();
+    };
     return (
-
         <div>
-            <h1>Reducer Todos!</h1>
-            {state.map(state => {
-                return (
-                    <div onClick={() => {
-                        dispatch({ type: "Toggle", payload: state.id })
-                    }} >
-                        {state.item}
-                    </div>
-                )
-            }
-            )}
+            <div>
+                {state.todos.map(todo => (
+                    <p
+                        key={todo.id}
+                        className={`item${todo.completed ? ' completed' : ''}`}
+                        onClick={() =>
+                            dispatch({ type: 'TOGGLE_TODO', payload: todo.id })
+                        }
+                    >
+                        {todo.item}
+                    </p>
 
-            <input
-                className="Input"
-                type="text"
-                name="newTitle"
-                value={newTitleText}
-                onChange={handleChanges}
-            />
-
-
-            <button onClick={() => { dispatch({ type: "Add_Todo", payload: newTitleText }); }}>
-                Add Item
-        </button>
-
-
-            <button onClick={() => { dispatch({ type: "Clear_Todo", payload: newTitleText }) }}>
-                Clear Completed
-        </button>
+                ))}
+            </div>
+            <form onSubmit={handleSubmit}>
+                <input
+                    type='text'
+                    name='todo'
+                    className='input'
+                    onChange={handleChanges}
+                />
+                <button
+                    type='submit'
+                    onClick={() =>
+                        dispatch({ type: 'ADD_TODO', payload: newTodo })
+                    }
+                >
+                    Add New
+            </button>
+                <button onClick={() => dispatch({ type: 'CLEAR_TODO' })}>
+                    Clear Completed
+            </button>
+            </form>
         </div>
-    )
+    );
 };
 
 export default TodoList;
